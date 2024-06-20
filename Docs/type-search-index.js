@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"<Unnamed>","l":"EventHandlerForT5"},{"p":"<Unnamed>","l":"Main"},{"p":"<Unnamed>","l":"TimeGUI"},{"p":"<Unnamed>","l":"Timer"}];updateSearchResults();
