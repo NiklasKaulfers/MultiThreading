@@ -7,11 +7,7 @@ import java.awt.event.ActionListener;
  * GUI for 6 timers different
  */
 public class TimeGUI implements ActionListener {
-    private final JFrame frame = new JFrame();
-    private final JPanel panel = new JPanel();
     private final JButton startTimer1 = new JButton("Start");
-    private final JButton startTimer2 = new JButton("Start");
-    private final JButton startTimer3 = new JButton("Start");
     private final JButton startTimer4 = new JButton("Start");
 
     /**
@@ -19,7 +15,6 @@ public class TimeGUI implements ActionListener {
      * needed in EventHandlerForT5
      */
     public final JButton startTimer5 = new JButton("Start");
-    private final JButton startTimer6 = new JButton("Start");
 
     private final JButton stopTimer1 = new JButton("STOP");
     private final JButton stopTimer2 = new JButton("STOP");
@@ -46,10 +41,12 @@ public class TimeGUI implements ActionListener {
      * builds the standard gui with all timers on 0
      */
     public TimeGUI() {
+        JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setTitle("Timer");
         frame.setSize(800, 600);
 
+        JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(6, 3));
 
         timer1Label = new JLabel();
@@ -78,6 +75,7 @@ public class TimeGUI implements ActionListener {
             }
         });
         // lambda action listener
+        JButton startTimer2 = new JButton("Start");
         startTimer2.addActionListener(e -> {
             if (t2 == null || !t2.isAlive()){
                 t2 = new Timer();
@@ -121,6 +119,7 @@ public class TimeGUI implements ActionListener {
         });
         stopTimer3.setEnabled(false);
         // anonymous class
+        JButton startTimer3 = new JButton("Start");
         startTimer3.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -238,6 +237,7 @@ public class TimeGUI implements ActionListener {
         panel.add(stopTimer5);
         panel.add(timer5Label);
 
+        JButton startTimer6 = new JButton("Start");
         startTimer6.addActionListener(ev6);
         stopTimer6.addActionListener(this);
 
