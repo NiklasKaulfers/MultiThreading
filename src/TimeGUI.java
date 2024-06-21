@@ -70,7 +70,11 @@ public class TimeGUI implements ActionListener {
         //t2 = new Timer();
         Thread thread2 = new Thread(() -> {
             while(Thread.currentThread().isAlive()){
-                timer2Label.setText(t2.getTime());
+                if (t2 == null || !t2.isAlive()){
+                    timer2Label.setText("not started");
+                } else {
+                    timer2Label.setText(t2.getTime());
+                }
             }
         });
         // lambda action listener
@@ -109,7 +113,7 @@ public class TimeGUI implements ActionListener {
         Thread thread3 = new Thread(() -> {
             while(Thread.currentThread().isAlive()){
                 if (t3 == null || !t3.isAlive()){
-                    timer3Label.setText("00:00");
+                    timer3Label.setText("not started");
                 } else {
                     timer3Label.setText(t3.getTime());
                 }
@@ -140,7 +144,6 @@ public class TimeGUI implements ActionListener {
             thread3.interrupt();
             t3.interrupt();
             stopTimer3.setEnabled(false);
-            timer3Label.setText("00:00");
         });
         panel.add(startTimer3);
         panel.add(stopTimer3);
@@ -155,7 +158,7 @@ public class TimeGUI implements ActionListener {
                 public void run() {
                     while(Thread.currentThread().isAlive()){
                         if (t4 == null || !t4.isAlive() ){
-                            timer4Label.setText("00:00");
+                            timer4Label.setText("not started");
                         } else {
                             timer4Label.setText(t4.getTime());
                         }
@@ -185,7 +188,6 @@ public class TimeGUI implements ActionListener {
                         thread4.interrupt();
                     }
                     t4.interrupt();
-                    timer4Label.setText("00:00");
                 }
             }
         }
@@ -220,8 +222,6 @@ public class TimeGUI implements ActionListener {
                         stopTimer6.setEnabled(true);
                         timer6Label.setText(ev6.getTime());
                     }
-                } else{
-                    timer6Label.setText("00:00");
                 }
                 try {
                     Thread.sleep(10);
@@ -259,7 +259,11 @@ public class TimeGUI implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         Thread thread1 = new Thread(() -> {
             while (Thread.currentThread().isAlive()) {
-                timer1Label.setText(t1.getTime());
+                if (t1 == null || !t1.isAlive()){
+                    timer1Label.setText("not started");
+                } else {
+                    timer1Label.setText(t1.getTime());
+                }
             }
         });
 
