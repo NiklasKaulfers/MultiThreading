@@ -9,4 +9,4 @@ it has 6 Timers which all have slightly different ActionListeners to Start/Stop 
 5 -> has a class in a seperate file as ActionListener<br>
 6 -> has an ActionListener which uses a static class  
 
-they all kind of work the same, however due to weird implementation Timer 6 and Timer 5 dont properly display when they re not started yet and just show 00:00.  
+they all kind of work the same, just change in that way. the code is slightly spaghetti'ish. 
