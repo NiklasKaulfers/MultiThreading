@@ -182,16 +182,30 @@ public class TimeGUI implements ActionListener {
         panel.add(timer4Label);
 
         ev = new EventHandlerForT5();
+        ev6 = new EventListenerForT6();
+        timer6Label = new JLabel("not started");
         Thread thread5 = new Thread(() -> {
             while (Thread.currentThread().isAlive()){
                 if (ev.isActive()){
                     stopTimer5.setEnabled(true);
-                    timer5Label.setText(ev.getTime());
+                    if (!ev.getTime().equals("00:00")){
+                        timer5Label.setText(ev.getTime());
+                    }
                 } else {
                     if (ev.getTime().equals("00:00")) {
                         stopTimer5.setEnabled(false);
                         timer5Label.setText("00:00");
                     }
+                }
+                if (ev6.getTime() != null){
+                    if (ev6.getTime().equals("00:00")) {
+                        stopTimer6.setEnabled(false);
+                    } else {
+                        stopTimer6.setEnabled(true);
+                        timer6Label.setText(ev6.getTime());
+                    }
+                } else{
+                    timer6Label.setText("00:00");
                 }
             }
         });
@@ -204,19 +218,6 @@ public class TimeGUI implements ActionListener {
         panel.add(stopTimer5);
         panel.add(timer5Label);
 
-
-        timer6Label = new JLabel("not started");
-        ev6 = new EventListenerForT6();
-        Thread thread6 = new Thread(() -> {
-            while (Thread.currentThread().isAlive()){
-                if (ev6.getTime() != null) {
-                    timer6Label.setText(ev6.getTime());
-                } else {
-                    timer6Label.setText("not started");
-                }
-            }
-        });
-        thread6.start();
         startTimer6.addActionListener(ev6);
         stopTimer6.addActionListener(this);
 
@@ -273,9 +274,24 @@ public class TimeGUI implements ActionListener {
         }
         if (e.getSource() == stopTimer5){
             ev.interruptTimer();
+
+            try {
+                ev.getThread().join();
+            } catch (InterruptedException ex){
+                System.err.println(ex.getMessage());
+            }
+            timer5Label.setText("not started");
+            stopTimer5.setEnabled(false);
         }
         if (e.getSource() == stopTimer6){
             ev6.interruptTimer();
+
+            try {
+                ev6.getThread().join();
+            } catch (InterruptedException ex) {
+                System.err.println("InterruptedException");
+            }
+            timer6Label.setText("not started");
         }
     }
 
@@ -318,6 +334,14 @@ public class TimeGUI implements ActionListener {
          */
         public void interruptTimer(){
             t.interrupt();
+        }
+
+        /**
+         * gets the thread for checking
+         * @return the thread listening to the timer
+         */
+        public Thread getThread(){
+            return t;
         }
     }
 }
