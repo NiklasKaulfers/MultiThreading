@@ -41,7 +41,6 @@ public class TimeGUI implements ActionListener {
     private Timer t4;
     private final EventHandlerForT5 ev;
     private final EventListenerForT6 ev6;
-    private final Thread thread4;
 
     /**
      * builds the standard gui with all timers on 0
@@ -68,7 +67,7 @@ public class TimeGUI implements ActionListener {
         panel.add(timer1Label);
 
         timer2Label = new JLabel("not started");
-        t2 = new Timer();
+        //t2 = new Timer();
         Thread thread2 = new Thread(() -> {
             while(Thread.currentThread().isAlive()){
                 timer2Label.setText(t2.getTime());
@@ -76,7 +75,7 @@ public class TimeGUI implements ActionListener {
         });
         // lambda action listener
         startTimer2.addActionListener(e -> {
-            if (!t2.isAlive()){
+            if (t2 == null || !t2.isAlive()){
                 t2 = new Timer();
                 t2.start();
                 stopTimer2.setEnabled(true);
@@ -92,8 +91,12 @@ public class TimeGUI implements ActionListener {
             }
         });
         stopTimer2.addActionListener(e -> {
-            stopTimer2.setEnabled(false);
             t2.interrupt();
+            t2 = new Timer();
+            stopTimer2.setEnabled(false);
+            if (thread2.isAlive()){
+                thread2.interrupt();
+            }
         });
         stopTimer2.setEnabled(false);
 
@@ -105,17 +108,22 @@ public class TimeGUI implements ActionListener {
         timer3Label = new JLabel("not started");
         Thread thread3 = new Thread(() -> {
             while(Thread.currentThread().isAlive()){
-                timer3Label.setText(t3.getTime());
+                if (t3 == null || !t3.isAlive()){
+                    timer3Label.setText("00:00");
+                } else {
+                    timer3Label.setText(t3.getTime());
+                }
             }
         });
+        stopTimer3.setEnabled(false);
         // anonymous class
         startTimer3.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                stopTimer3.setEnabled(true);
                 if (!t3.isAlive()){
                     t3 = new Timer();
                     t3.start();
-                    stopTimer3.setEnabled(true);
                 }
                 if (!t3.isRunning()){
                     t3.continueTimer();
@@ -128,11 +136,11 @@ public class TimeGUI implements ActionListener {
                 }
             }
         });
-        stopTimer3.setEnabled(false);
         stopTimer3.addActionListener(e -> {
             thread3.interrupt();
             t3.interrupt();
             stopTimer3.setEnabled(false);
+            timer3Label.setText("00:00");
         });
         panel.add(startTimer3);
         panel.add(stopTimer3);
@@ -141,40 +149,49 @@ public class TimeGUI implements ActionListener {
         // non-static inner class
         t4 = new Timer();
         timer4Label = new JLabel("not started");
-        thread4 = new Thread(() -> {
-            while (Thread.currentThread().isAlive()){
-                timer4Label.setText(t4.getTime());
-            }
-        });
         class EventHandlerForT4 implements ActionListener {
             final Thread thread4 = new Thread(){
                 @Override
                 public void run() {
                     while(Thread.currentThread().isAlive()){
-                        timer4Label.setText(t4.getTime());
+                        if (t4 == null || !t4.isAlive() ){
+                            timer4Label.setText("00:00");
+                        } else {
+                            timer4Label.setText(t4.getTime());
+                        }
                     }
                 }
             };
             @Override
             public void actionPerformed(ActionEvent e) {
-                    if (!t4.isAlive()){
+                if (e.getSource() == startTimer4) {
+                    stopTimer4.setEnabled(true);
+                    if (!t4.isAlive()) {
                         t4 = new Timer();
                         t4.start();
                         stopTimer4.setEnabled(true);
                     }
-                    if (!t4.isRunning()){
+                    if (!t4.isRunning()) {
                         t4.continueTimer();
                         if (!thread4.isAlive())
                             thread4.start();
                     } else {
                         t4.stopTimer();
-                        if (thread4.isAlive())
-                            t4.stopTimer();
                     }
+                }
+                if (e.getSource() == stopTimer4) {
+                    stopTimer4.setEnabled(false);
+                    if (thread4.isAlive()) {
+                        thread4.interrupt();
+                    }
+                    t4.interrupt();
+                    timer4Label.setText("00:00");
+                }
             }
         }
-        startTimer4.addActionListener(new EventHandlerForT4());
-        stopTimer4.addActionListener(this);
+        EventHandlerForT4 ev4 = new EventHandlerForT4();
+        startTimer4.addActionListener(ev4);
+        stopTimer4.addActionListener(ev4);
 
         stopTimer4.setEnabled(false);
         panel.add(startTimer4);
@@ -183,20 +200,19 @@ public class TimeGUI implements ActionListener {
 
         ev = new EventHandlerForT5();
         ev6 = new EventListenerForT6();
+        timer5Label = new JLabel("not started");
         timer6Label = new JLabel("not started");
         Thread thread5 = new Thread(() -> {
             while (Thread.currentThread().isAlive()){
-                if (ev.isActive()){
+                if (ev.isActive() && !ev.getTime().equals("00:00")){
+                    timer5Label.setText(ev.getTime());
                     stopTimer5.setEnabled(true);
-                    if (!ev.getTime().equals("00:00")){
-                        timer5Label.setText(ev.getTime());
-                    }
-                } else {
-                    if (ev.getTime().equals("00:00")) {
-                        stopTimer5.setEnabled(false);
-                        timer5Label.setText("00:00");
-                    }
                 }
+                if (ev.getTime().equals("00:00") || !ev.getThread().isAlive()) {
+                    timer5Label.setText("not started");
+                    stopTimer5.setEnabled(false);
+                }
+
                 if (ev6.getTime() != null){
                     if (ev6.getTime().equals("00:00")) {
                         stopTimer6.setEnabled(false);
@@ -207,10 +223,14 @@ public class TimeGUI implements ActionListener {
                 } else{
                     timer6Label.setText("00:00");
                 }
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    System.err.println("error");
+                }
             }
         });
         thread5.start();
-        timer5Label = new JLabel("not started");
         startTimer5.addActionListener(ev);
         stopTimer5.addActionListener(this);
         stopTimer5.setEnabled(false);
@@ -269,8 +289,9 @@ public class TimeGUI implements ActionListener {
             stopTimer1.setEnabled(false);
         }
         if (e.getSource() == stopTimer4){
-            thread4.interrupt();
+            t4.interrupt();
             stopTimer4.setEnabled(false);
+
         }
         if (e.getSource() == stopTimer5){
             ev.interruptTimer();
@@ -281,7 +302,6 @@ public class TimeGUI implements ActionListener {
                 System.err.println(ex.getMessage());
             }
             timer5Label.setText("not started");
-            stopTimer5.setEnabled(false);
         }
         if (e.getSource() == stopTimer6){
             ev6.interruptTimer();
