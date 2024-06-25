@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="MultiThreading:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/MultiThreading_jar</output-path>
+    <root id="archive" name="MultiThreading.jar">
+      <element id="module-output" name="MultiThreading" />
+    </root>
+  </artifact>
+</component>
